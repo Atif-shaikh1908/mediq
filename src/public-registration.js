@@ -55,7 +55,7 @@ export function renderPublicRegistration(app, icon, client, registrationEnabled)
           <button class="button button-secondary registration-reset" type="button">Register another patient</button>
         </section>
       </section>
-      <footer class="public-registration-footer">Please ask hospital reception if you need help with registration.</footer>
+      <footer class="public-registration-footer">Please ask hospital reception if you need help with registration.<br>© ${new Date().getFullYear()} MediQ — All Rights Reserved.</footer>
     </div>
   </main>`
 
