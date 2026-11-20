@@ -646,3 +646,25 @@ body.public-registration-page { min-width: 0; }
   .registration-emergency-actions { display: grid; grid-template-columns: 1fr; }
   .registration-call-button { width: 100%; }
 }
+
+
+/* Patient registration and queue-token QR codes */
+.qr-share-card { display: flex; align-items: center; gap: 22px; padding: 20px; border: 1px solid #e3ebf0; border-radius: 12px; background: #fff; }
+.qr-share-card > div:last-child { display: grid; gap: 7px; }
+.qr-share-card strong, .registration-token-qr strong { color: #243e52; font-size: 14px; }
+.qr-share-card p, .token-qr-content p { margin: 0; color: #75899a; font-size: 12px; line-height: 1.55; }
+.qr-code { display: grid; place-items: center; width: 196px; min-width: 196px; min-height: 196px; padding: 10px; border: 1px solid #e5edf2; border-radius: 10px; background: #fff; color: #74899a; font-size: 11px; text-align: center; }
+.qr-code img, .qr-code canvas { display: block; max-width: 100%; height: auto; }
+.token-qr-content { display: grid; justify-items: center; gap: 14px; text-align: center; }
+.token-qr-number { color: #197e9c; font-size: 25px; letter-spacing: .04em; }
+.qr-code-large { width: 216px; min-width: 216px; min-height: 216px; }
+.registration-token-qr { display: grid; justify-items: center; gap: 9px; margin: 18px 0; padding: 16px; border: 1px solid #e4edf2; border-radius: 10px; background: #f8fbfc; }
+.registration-token-qr small { color: #8193a0; font-size: 11px; text-align: center; }
+@media (max-width: 560px) { .qr-share-card { align-items: flex-start; flex-direction: column; } }
+@media print {
+  body * { visibility: hidden !important; }
+  #modal-root .modal, #modal-root .modal * { visibility: visible !important; }
+  #modal-root .modal { position: absolute; inset: 0; width: 100%; max-width: none; box-shadow: none; }
+  #modal-root .modal-backdrop { position: static; padding: 0; background: #fff; }
+  #modal-root .modal-actions, #modal-root [data-action="close-modal"] { display: none !important; }
+}
