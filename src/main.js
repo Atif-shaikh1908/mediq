@@ -10,6 +10,7 @@ import {
   updateHospitalName,
   updatePatient,
   updateStaffProfile,
+  inviteStaffMember,
 } from './lib/api.js'
 import { isSupabaseConfigured, supabase, supabaseConfigError } from './lib/supabase.js'
 import { renderPublicRegistration } from './public-registration.js'
@@ -513,6 +514,9 @@ function renderModal() {
       const fields = `<div class="form-grid"><label class="form-field form-full"><span>Full name</span><input name="name" required maxlength="120" value="${escapeHtml(patient.name)}" ${canEdit ? '' : 'readonly'}></label><label class="form-field"><span>Age</span><input name="age" type="number" min="0" max="120" required value="${patient.age}" ${canEdit ? '' : 'readonly'}></label><label class="form-field"><span>Gender</span><select name="gender" ${canEdit ? '' : 'disabled'}>${['Female', 'Male', 'Non-binary', 'Prefer not to say'].map((gender) => `<option ${patient.gender === gender ? 'selected' : ''}>${gender}</option>`).join('')}</select></label><label class="form-field form-full"><span>Mobile number</span><input name="mobile" type="tel" required value="${escapeHtml(patient.mobile)}" ${canEdit ? '' : 'readonly'}></label></div>`
       content = `<div class="modal-heading"><div><p class="eyebrow">PATIENT PROFILE</p><h2>${escapeHtml(patient.name)}</h2><p>${escapeHtml(patient.id)} · Registered ${formatTime(patient.createdAt)}</p></div><button class="icon-button" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="profile-summary"><span class="avatar avatar-soft avatar-large">${initials(patient.name)}</span><div><span class="token">${escapeHtml(patient.token || 'No visit')}</span>${patient.status ? `<span class="status-badge ${patient.status.toLowerCase()}"><i></i>${escapeHtml(patient.status)}</span>` : ''}</div></div>${canEdit ? `<form id="edit-patient-form" class="modal-form"><input type="hidden" name="patientUuid" value="${escapeHtml(patient.patientUuid)}">${fields}<div class="modal-actions"><button type="button" class="button button-secondary" data-action="close-modal">Cancel</button><button type="submit" class="button button-primary">${icon('check')} Save profile</button></div></form>` : `<div class="modal-form">${fields}<div class="modal-actions"><button type="button" class="button button-secondary" data-action="close-modal">Close</button></div></div>`}`
     }
+  } else if (state.modal.type === 'staff-invite') {
+    content = `<div class="modal-heading"><div><p class="eyebrow">STAFF DIRECTORY</p><h2>Invite staff member</h2><p>An invitation email will be sent and their MediQ profile created.</p></div><button class="icon-button" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div>
+    <form id="staff-invite-form" class="modal-form"><div class="form-grid"><label class="form-field form-full"><span>Full name <b>*</b></span><input name="fullName" required maxlength="120" autocomplete="name" placeholder="Staff member name"></label><label class="form-field form-full"><span>Work email <b>*</b></span><input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="name@hospital.com"></label><label class="form-field"><span>Role <b>*</b></span><select name="role" required><option value="">Select role</option><option>Doctor</option><option>Nurse</option><option>Receptionist</option></select></label><label class="form-field"><span>Department</span><select name="departmentId"><option value="">Unassigned</option>${state.departmentRows.map((department) => `<option value="${department.id}">${escapeHtml(department.name)}</option>`).join('')}</select></label></div><div class="form-guidance">${icon('settings')} The invitation link lets the staff member set up their account. Admin access cannot be assigned from this form.</div><div class="modal-actions"><button type="button" class="button button-secondary" data-action="close-modal">Cancel</button><button type="submit" class="button button-primary">${icon('plus')} Send invitation</button></div></form>`
   } else if (state.modal.type === 'staff') {
     const person = state.staff.find((member) => member.id === state.modal.id)
     if (person) content = `<div class="modal-heading"><div><p class="eyebrow">STAFF DIRECTORY</p><h2>Edit staff profile</h2><p>${escapeHtml(person.email)}</p></div><button class="icon-button" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><form id="staff-form" class="modal-form"><input type="hidden" name="userId" value="${escapeHtml(person.id)}"><div class="form-grid"><label class="form-field form-full"><span>Full name <b>*</b></span><input name="name" required maxlength="120" value="${escapeHtml(person.name)}"></label><label class="form-field"><span>Role <b>*</b></span><select name="role" required>${['Admin', 'Receptionist', 'Doctor', 'Nurse'].map((role) => `<option ${person.role === role ? 'selected' : ''}>${role}</option>`).join('')}</select></label><label class="form-field"><span>Department</span><select name="departmentId"><option value="">Unassigned</option>${state.departmentRows.map((department) => `<option value="${department.id}" ${person.departmentId === department.id ? 'selected' : ''}>${escapeHtml(department.name)}</option>`).join('')}</select></label></div><div class="form-guidance">${icon('settings')} Role changes take effect immediately and are checked by database RLS.</div><div class="modal-actions"><button type="button" class="button button-secondary" data-action="close-modal">Cancel</button><button type="submit" class="button button-primary">${icon('check')} Save profile</button></div></form>`
@@ -728,7 +732,7 @@ app.addEventListener('click', async (event) => {
     }
   }
   if (action === 'edit-staff') { state.modal = { type: 'staff', id: target.dataset.id }; renderModal() }
-  if (action === 'invite-staff') showToast('Create or invite the Auth user in Supabase first, then provision their staff profile. See README.md.', 'error')
+  if (action === 'invite-staff') { if (state.profile?.role !== 'Admin') { showToast('Only admins can invite staff.', 'error'); return }; state.modal = { type: 'staff-invite' }; renderModal() }
   if (action === 'save-settings') {
     const input = document.querySelector('#hospital-name')
     if (!input.value.trim()) { showToast('Hospital name cannot be empty.', 'error'); input.focus(); return }
@@ -807,6 +811,31 @@ app.addEventListener('submit', (event) => {
   }
   if (event.target.id === 'register-form') { event.preventDefault(); registerPatient(event.target) }
   if (event.target.id === 'edit-patient-form') { event.preventDefault(); savePatient(event.target) }
+  if (event.target.id === 'staff-invite-form') {
+    event.preventDefault()
+    if (state.profile?.role !== 'Admin') { showToast('Only admins can invite staff.', 'error'); return }
+    const form = event.target
+    const data = new FormData(form)
+    const submit = form.querySelector('button[type="submit"]')
+    submit.disabled = true
+    submit.textContent = 'Sending invitation…'
+    const staff = {
+      fullName: String(data.get('fullName')).trim(),
+      email: String(data.get('email')).trim(),
+      role: String(data.get('role')),
+      departmentId: String(data.get('departmentId')) || null,
+    }
+    inviteStaffMember(supabase, staff)
+      .then(async () => {
+        state.modal = null
+        await refreshWorkspace()
+        showToast(`Invitation sent to ${staff.email} and staff profile created.`)
+      })
+      .catch((error) => {
+        showToast(`Staff invitation failed: ${error.message}`, 'error')
+        if (submit.isConnected) { submit.disabled = false; submit.innerHTML = `${icon('plus')} Send invitation` }
+      })
+  }
   if (event.target.id === 'staff-form') {
     event.preventDefault()
     if (state.profile.role !== 'Admin') { showToast('Only admins can manage staff profiles.', 'error'); return }
