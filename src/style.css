@@ -668,3 +668,82 @@ body.public-registration-page { min-width: 0; }
   #modal-root .modal-backdrop { position: static; padding: 0; background: #fff; }
   #modal-root .modal-actions, #modal-root [data-action="close-modal"] { display: none !important; }
 }
+
+
+/* MediQ theme preferences */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e5edf5;
+  --muted: #a4b3c2;
+  --line: #304253;
+  --shadow: 0 3px 14px rgba(0, 0, 0, .18);
+  background: #101d29;
+}
+:root[data-theme="dark"] body { background: #101d29; color: #e5edf5; }
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] .topbar,
+:root[data-theme="dark"] .metric-card,
+:root[data-theme="dark"] .department-card,
+:root[data-theme="dark"] .table-card,
+:root[data-theme="dark"] .queue-card,
+:root[data-theme="dark"] .settings-card,
+:root[data-theme="dark"] .chart-card,
+:root[data-theme="dark"] .staff-card,
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .public-registration-card {
+  background: #192a39;
+  color: #e5edf5;
+  border-color: #304253;
+}
+:root[data-theme="dark"] .nav-link,
+:root[data-theme="dark"] .breadcrumb,
+:root[data-theme="dark"] .page-description,
+:root[data-theme="dark"] .metric-label,
+:root[data-theme="dark"] .metric-foot,
+:root[data-theme="dark"] .form-field > span,
+:root[data-theme="dark"] .table-card p,
+:root[data-theme="dark"] .staff-card p,
+:root[data-theme="dark"] .settings-card p {
+  color: #a4b3c2;
+}
+:root[data-theme="dark"] .nav-link:hover,
+:root[data-theme="dark"] .nav-link.active { background: #243d50; color: #9bd6f3; }
+:root[data-theme="dark"] .sidebar-public,
+:root[data-theme="dark"] .setting-readonly,
+:root[data-theme="dark"] .data-info > div,
+:root[data-theme="dark"] .registration-privacy,
+:root[data-theme="dark"] .registration-success dl div,
+:root[data-theme="dark"] .registration-token-qr,
+:root[data-theme="dark"] .qr-share-card {
+  background: #203444;
+  border-color: #3a5265;
+  color: #d7e3ec;
+}
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+  background: #122331;
+  color: #e5edf5;
+  border-color: #40586a;
+}
+:root[data-theme="dark"] table th,
+:root[data-theme="dark"] table td { border-color: #304253; }
+:root[data-theme="dark"] .app-copyright {
+  padding: 12px 30px 18px;
+  color: #8194a5;
+  font-size: 11px;
+  text-align: center;
+}
+:root[data-theme="dark"] .public-registration-route { background: #101d29; }
+:root[data-theme="dark"] .public-registration-card h1,
+:root[data-theme="dark"] .registration-success h2,
+:root[data-theme="dark"] .qr-share-card strong,
+:root[data-theme="dark"] .registration-token-qr strong { color: #e5edf5; }
+:root[data-theme="dark"] .public-registration-intro,
+:root[data-theme="dark"] .registration-privacy,
+:root[data-theme="dark"] .public-registration-footer { color: #a4b3c2; }
+:root[data-theme="dark"] .registration-emergency { background: #382c24; border-color: #70523a; color: #f0cba5; }
+:root[data-theme="dark"] .registration-emergency strong { color: #ffd7a8; }
+:root[data-theme="dark"] .registration-status { background: #382f23; border-color: #705b3b; color: #f0d5ad; }
+:root[data-theme="dark"] .public-registration-footer { color: #9aabba; }
