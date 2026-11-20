@@ -622,3 +622,27 @@ body.public-registration-page { min-width: 0; }
   .registration-full { grid-column: auto; }
   .registration-success dl { grid-template-columns: 1fr; }
 }
+
+
+/* Emergency call actions on the public patient registration page */
+.registration-emergency-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 12px;
+}
+.registration-call-button {
+  min-height: 40px;
+  text-decoration: none;
+}
+.registration-emergency small {
+  display: block;
+  margin-top: 9px;
+  color: #8b6d68;
+  font-size: 10px;
+  line-height: 1.5;
+}
+@media (max-width: 480px) {
+  .registration-emergency-actions { display: grid; grid-template-columns: 1fr; }
+  .registration-call-button { width: 100%; }
+}
