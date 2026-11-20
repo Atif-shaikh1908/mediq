@@ -51,6 +51,7 @@ export function renderPublicRegistration(app, icon, client, registrationEnabled)
           <p class="eyebrow">REGISTRATION COMPLETE</p>
           <h2 id="registration-success-title">You’re in the queue</h2>
           <dl><div><dt>Patient ID</dt><dd data-patient-id></dd></div><div><dt>Queue token</dt><dd data-queue-token></dd></div></dl>
+          <div class="registration-token-qr"><strong>Save your queue token QR</strong><div id="public-token-qr" class="qr-code qr-code-large" role="img" aria-label="QR code containing patient ID and queue token"></div><small>This QR contains only your patient ID and token. Keep it private.</small></div>
           <button class="button button-secondary registration-reset" type="button">Register another patient</button>
         </section>
       </section>
@@ -174,6 +175,12 @@ export function renderPublicRegistration(app, icon, client, registrationEnabled)
   function showSuccess({ patientId, token }) {
     app.querySelector('[data-patient-id]').textContent = patientId
     app.querySelector('[data-queue-token]').textContent = token
+    const qrRoot = app.querySelector('#public-token-qr')
+    if (qrRoot && typeof window.QRCode === 'function') {
+      new window.QRCode(qrRoot, { text: `MediQ queue token\\nPatient ID: ${patientId}\\nToken: ${token}`, width: 176, height: 176, correctLevel: window.QRCode.CorrectLevel.M })
+    } else if (qrRoot) {
+      qrRoot.textContent = 'QR generator unavailable. Please save your patient ID and token.'
+    }
     status.hidden = true
     form.hidden = true
     success.hidden = false
