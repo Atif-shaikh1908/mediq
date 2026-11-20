@@ -48,10 +48,22 @@ The browser publishable/anon key is public by design; RLS is the security bounda
 
 The linked project’s Security Advisor no longer reports anonymous access to trigger-only `SECURITY DEFINER` functions. It still reports authenticated access to the role-checked queue RPCs and role helper; test those permissions with each staff role before production use.
 
+## Staff invitations
+
+The admin-only `invite-staff` Edge Function verifies the caller's Supabase access token and active `Admin` profile before inviting a user through Supabase Auth and creating their `staff_profiles` row. The service-role key is used only inside the Edge Function. The browser cannot assign Admin through the invitation form.
+
+Before sending invitations, add this exact URL to Supabase Auth > URL Configuration > Redirect URLs:
+
+```
+https://atif-shaikh1908.github.io/mediq/
+```
+
+Confirm the Supabase project's Site URL and email provider are configured for the intended hospital workflow. Invitation delivery depends on Supabase Auth email configuration and provider limits. Test with a controlled staff email before inviting real staff.
+
 ## Known gaps
 
-- Staff Auth invitations and initial profile provisioning are administrator-operated in Supabase; the app does not include a trusted server/Edge Function to invite users.
-- No production deployment, email delivery, organization/tenant isolation, backup/retention policy, or penetration/security test is configured here.
+- Staff invitation email delivery and the invited user's first sign-in/password setup still need an end-to-end test.
+- No organization/tenant isolation, backup/retention policy, or penetration/security test is configured here.
 - UI reporting loads records from the current Supabase dataset and is intended for a single hospital project. For a large deployment, add server-side pagination and date-filtered reporting queries.
-- The linked project has the core schema and function-permission hardening migrations applied, but no staff Auth user or profile has been provisioned. Authenticated role flows still need testing with staff accounts before real patient information is used.
+- Authenticated role flows still need testing with each staff role before real patient information is used.
 - The linked database already reports `Asia/Kolkata` for queue-date calculations, but its migration history does not show the local timezone migration. Reconcile that history before applying later migrations; public-registration migration 004 is a local draft only.
