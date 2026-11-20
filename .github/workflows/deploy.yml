@@ -1,4 +1,5 @@
-﻿name: Deploy MediQ to GitHub Pages
+name: Deploy MediQ to GitHub Pages
+# Fresh deployment trigger after repository variables were configured.
 
 on:
   push:
