@@ -71,6 +71,16 @@ const state = {
   publicRegistrationRetention: null,
 }
 const app = document.querySelector('#app')
+const themeStorageKey = 'mediq-theme'
+function applyTheme(theme) {
+  const selected = theme === 'dark' ? 'dark' : 'light'
+  document.documentElement.dataset.theme = selected
+  try { globalThis.localStorage.setItem(themeStorageKey, selected) } catch { /* Theme remains active for this page view. */ }
+  return selected
+}
+let currentTheme = 'light'
+try { currentTheme = globalThis.localStorage.getItem(themeStorageKey) === 'dark' ? 'dark' : 'light' } catch { currentTheme = 'light' }
+applyTheme(currentTheme)
 
 const appBase = import.meta.env.BASE_URL
 const appPath = window.location.pathname.slice(appBase.length - 1).replace(/\/$/, '') || '/'
@@ -179,6 +189,7 @@ function renderShell() {
         <div class="breadcrumb"><span>Workspace</span>${icon('chevron')}<strong>${escapeHtml(state.page)}</strong></div>
         <div class="topbar-right">
           <span class="today-label">${dateLabel()}</span>
+          <button class="button button-secondary theme-toggle" data-action="toggle-theme" type="button" aria-label="Switch color theme">${currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark'}</button>
           <span class="role-chip">${escapeHtml(state.profile.role)}</span>
           <div class="topbar-divider"></div>
           <div class="user-menu"><span class="avatar avatar-blue">${initials(state.profile.full_name)}</span><div><strong>${escapeHtml(state.profile.full_name)}</strong><small>${escapeHtml(state.profile.email)}</small></div></div>
@@ -186,6 +197,7 @@ function renderShell() {
         </div>
       </header>
       <main id="page-content" class="page-content"></main>
+      <footer class="app-copyright">© ${new Date().getFullYear()} MediQ — All Rights Reserved.</footer>
     </section>
     <div id="modal-root"></div>
     <div id="toast-root" aria-live="polite"></div>`
@@ -734,6 +746,7 @@ app.addEventListener('click', async (event) => {
     changePage(page)
     return
   }
+  if (action === 'toggle-theme') { currentTheme = applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); renderShell(); return }
   if (action === 'toggle-menu') { state.mobileMenu = true; renderShell() }
   if (action === 'close-menu') { state.mobileMenu = false; renderShell() }
   if (action === 'open-register') { state.modal = { type: 'register' }; renderModal() }
