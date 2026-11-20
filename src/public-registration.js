@@ -25,7 +25,15 @@ export function renderPublicRegistration(app, icon, client, registrationEnabled)
         <p class="eyebrow">WELCOME TO MEDIQ</p>
         <h1 id="registration-title">Join the queue</h1>
         <p class="public-registration-intro">Enter your details to request a place in your department’s queue.</p>
-        <div class="registration-emergency" role="note"><strong>Need urgent medical attention?</strong><span>Contact hospital staff directly or go to the Emergency Department. Do not wait for online registration.</span></div>
+        <div class="registration-emergency" role="note">
+          <strong>Need urgent medical attention?</strong>
+          <span>Do not wait for online registration. Call emergency services or contact hospital staff directly.</span>
+          <div class="registration-emergency-actions">
+            <a class="button button-danger registration-call-button" href="tel:108">☎ Call Ambulance · 108</a>
+            <a class="button button-secondary registration-call-button" href="tel:112">Call Emergency · 112</a>
+          </div>
+          <small>These buttons open your phone dialer. MediQ does not dispatch an ambulance.</small>
+        </div>
         <form id="public-registration-form" class="public-registration-form">
           <div class="public-registration-fields">
             <label class="form-field registration-full"><span>Full name <b>*</b></span><input name="fullName" type="text" autocomplete="name" maxlength="120" required placeholder="Enter your full name"></label>
