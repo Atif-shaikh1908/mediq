@@ -194,6 +194,30 @@ export async function updateStaffProfile(client, userId, profile) {
   return unwrap(result)
 }
 
+export async function inviteStaffMember(client, staff) {
+  const { data: sessionData, error: sessionError } = await client.auth.getSession()
+  if (sessionError) throw sessionError
+  const accessToken = sessionData.session?.access_token
+  if (!accessToken) throw new Error('Your session has expired. Please sign in again.')
+
+  const result = await client.functions.invoke('invite-staff', {
+    body: staff,
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  if (!result.error) return result.data
+
+  const context = result.error.context
+  if (context instanceof Response) {
+    try {
+      const body = await context.clone().json()
+      if (typeof body?.error === 'string') throw new Error(body.error)
+    } catch (error) {
+      if (error instanceof Error && error.message !== result.error.message) throw error
+    }
+  }
+  throw result.error
+}
+
 export async function updateHospitalName(client, hospitalName) {
   const result = await client.from('hospital_settings')
     .update({ hospital_name: hospitalName })
