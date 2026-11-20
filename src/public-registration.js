@@ -15,7 +15,7 @@ export function renderPublicRegistration(app, icon, client, registrationEnabled)
   app.innerHTML = `<main class="public-route public-registration-route">
     <div class="public-registration-shell">
       <header class="public-registration-header">
-        <a class="brand public-registration-brand" href="/display" aria-label="MediQ public queue display">
+        <a class="brand public-registration-brand" href="${import.meta.env.BASE_URL}display" aria-label="MediQ public queue display">
           <span class="brand-mark">${icon('heart')}</span>
           <span class="brand-copy"><strong>Medi<span>Q</span></strong><small>CARE, IN ORDER</small></span>
         </a>

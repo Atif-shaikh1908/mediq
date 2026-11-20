@@ -71,8 +71,10 @@ const state = {
 }
 const app = document.querySelector('#app')
 
-const isPublicDisplay = window.location.pathname === '/display'
-const isPublicRegistration = window.location.pathname === '/register'
+const appBase = import.meta.env.BASE_URL
+const appPath = window.location.pathname.slice(appBase.length - 1).replace(/\/$/, '') || '/'
+const isPublicDisplay = appPath === '/display'
+const isPublicRegistration = appPath === '/register'
 const isPublicRegistrationEnabled = import.meta.env.VITE_PUBLIC_REGISTRATION_ENABLED === 'true'
 let workspaceChannel = null
 let publicChannel = null
@@ -199,7 +201,7 @@ function renderConfigurationError() {
 }
 
 function renderSignIn(error = '') {
-  app.innerHTML = `<main class="auth-screen"><section class="auth-card auth-card-login"><a class="brand auth-brand" href="/"><span class="brand-mark">${icon('heart')}</span><span class="brand-copy"><strong>Medi<span>Q</span></strong><small>CARE, IN ORDER</small></span></a><p class="eyebrow">STAFF WORKSPACE</p><h1>Welcome back</h1><p>Sign in with your hospital staff account.</p>${error ? `<div class="auth-error" role="alert">${escapeHtml(error)}</div>` : ''}<form id="sign-in-form" class="auth-form"><label class="form-field"><span>Work email</span><input type="email" name="email" autocomplete="username" required placeholder="you@hospital.com"></label><label class="form-field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required minlength="8" placeholder="Enter your password"></label><button class="button button-primary auth-submit" type="submit">Sign in</button></form><p class="auth-help">Staff accounts are provisioned by your MediQ administrator. Contact your administrator if you need access.</p></section></main>`
+  app.innerHTML = `<main class="auth-screen"><section class="auth-card auth-card-login"><a class="brand auth-brand" href="${appBase}"><span class="brand-mark">${icon('heart')}</span><span class="brand-copy"><strong>Medi<span>Q</span></strong><small>CARE, IN ORDER</small></span></a><p class="eyebrow">STAFF WORKSPACE</p><h1>Welcome back</h1><p>Sign in with your hospital staff account.</p>${error ? `<div class="auth-error" role="alert">${escapeHtml(error)}</div>` : ''}<form id="sign-in-form" class="auth-form"><label class="form-field"><span>Work email</span><input type="email" name="email" autocomplete="username" required placeholder="you@hospital.com"></label><label class="form-field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required minlength="8" placeholder="Enter your password"></label><button class="button button-primary auth-submit" type="submit">Sign in</button></form><p class="auth-help">Staff accounts are provisioned by your MediQ administrator. Contact your administrator if you need access.</p></section></main>`
 }
 
 function renderProfileMissing() {
@@ -745,7 +747,7 @@ app.addEventListener('click', async (event) => {
     if (document.fullscreenElement) document.exitFullscreen()
     else if (display && display.requestFullscreen) display.requestFullscreen().catch(() => showToast('Full screen is not available in this browser.', 'error'))
   }
-  if (action === 'open-public-display') window.open('/display', '_blank', 'noopener,noreferrer')
+  if (action === 'open-public-display') window.open(`${appBase}display`, '_blank', 'noopener,noreferrer')
   if (action === 'retry-workspace') {
     if (state.user) await loadSignedInWorkspace(state.user, true)
   }
